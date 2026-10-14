@@ -1,0 +1,5 @@
+database:
+  url: "jdbc:postgresql://localhost:5432/banking"
+  username: ${DB_USERNAME:user}
+  password: ${DB_PASSWORD:password}
+  poolSize: 10

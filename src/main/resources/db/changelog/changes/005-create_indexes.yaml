@@ -1,0 +1,56 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-create-indexes
+      author: alexander.vereta
+      changes:
+        - sql:
+            sql: CREATE UNIQUE INDEX uq_users_email_lower ON users (lower(email));
+        - createIndex:
+            tableName: accounts
+            indexName: idx_accounts_owner
+            columns:
+              - column:
+                  name: owner_id
+        - createIndex:
+            tableName: ledger_entries
+            indexName: idx_ledger_account_date
+            columns:
+              - column:
+                  name: account_id
+              - column:
+                  name: created_at
+                  descending: true
+        - createIndex:
+            tableName: transfers
+            indexName: idx_transfers_source_date
+            columns:
+              - column:
+                  name: from_account_id
+              - column:
+                  name: created_at
+                  descending: true
+        - createIndex:
+            tableName: transfers
+            indexName: idx_transfers_target_date
+            columns:
+              - column:
+                  name: to_account_id
+              - column:
+                  name: created_at
+                  descending: true
+      rollback:
+        - dropIndex:
+            tableName: users
+            indexName: uq_users_email_lower
+        - dropIndex:
+            tableName: accounts
+            indexName: idx_accounts_owner
+        - dropIndex:
+            tableName: ledger_entries
+            indexName: idx_ledger_account_date
+        - dropIndex:
+            tableName: transfers
+            indexName: idx_transfers_source_date
+        - dropIndex:
+            tableName: transfers
+            indexName: idx_transfers_target_date

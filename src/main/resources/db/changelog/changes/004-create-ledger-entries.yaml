@@ -1,0 +1,62 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-create-ledger-entries
+      author: alexander.vereta
+      changes:
+        - createTable:
+            tableName: ledger_entries
+            remarks: "Денежные проводки"
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_ledger_entries
+              - column:
+                  name: transfer_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: account_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: NUMERIC(19, 2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMPTZ
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: ledger_entries
+            baseColumnNames: transfer_id
+            referencedTableName: transfers
+            referencedColumnNames: id
+            constraintName: fk_ledger_entries_transfer
+            onDelete: RESTRICT
+        - addForeignKeyConstraint:
+            baseTableName: ledger_entries
+            baseColumnNames: account_id
+            referencedTableName: accounts
+            referencedColumnNames: id
+            constraintName: fk_ledger_entries_account
+            onDelete: RESTRICT
+        - addUniqueConstraint:
+            tableName: ledger_entries
+            columnNames: transfer_id, account_id
+            constraintName: uq_ledger_entries_transfer_account
+        - sql:
+            sql: |
+              ALTER TABLE ledger_entries
+                ADD CONSTRAINT chk_nonzero_amount CHECK (amount <> 0);
+      rollback:
+        - dropTable:
+            tableName: ledger_entries

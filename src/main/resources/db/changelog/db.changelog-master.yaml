@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - include:
+      file: changes/001-create-users.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/002-create-accounts.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/003-create-transfers.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/004-create-ledger-entries.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/005-create_indexes.yaml
+      relativeToChangelogFile: true

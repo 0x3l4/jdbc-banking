@@ -1,0 +1,70 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-create-accounts
+      author: alexander.vereta
+      changes:
+        - createTable:
+            tableName: accounts
+            remarks: "Банковские счета"
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_accounts
+                    nullable: false
+              - column:
+                  name: owner_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: account_number
+                  type: VARCHAR(34)
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: uq_accounts_account_number
+              - column:
+                  name: currency
+                  type: CHAR(3)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: balance
+                  type: NUMERIC(19, 2)
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(16)
+                  defaultValue: ACTIVE
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: accounts
+            baseColumnNames: owner_id
+            referencedTableName: users
+            referencedColumnNAmes: id
+            constraintName: fk_accounts_owner
+            onDelete: RESTRICT
+        - addUniqueConstraint:
+            tableName: accounts
+            columnNames: id, currency
+            constraintName: uq_accounts_id_currency
+        - sql:
+            sql: |
+              ALTER TABLE accounts
+                ADD CONSTRAINT chk_account_balance_nonnegative CHECK (balance >= 0);
+              ALTER TABLE accounts
+                ADD CONSTRAINT chk_accounts_status CHECK (status IN ('ACTIVE', 'BLOCKED'));
+              ALTER TABLE accounts
+                ADD CONSTRAINT chk_accounts_currency CHECK (currency ~'^[A-Z]{3}$');
+      rollback:
+        - dropTable:
+            tableName: accounts
+
+
