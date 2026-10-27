@@ -36,12 +36,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: amount
-                  type: NUMERIC(19, 2)
+                  type: NUMERIC(19, 4)
                   constraints:
                     nullable: false
               - column:
                   name: currency
-                  type: CHAR(3)
+                  type: VARCHAR(3)
                   constraints:
                     nullable: false
               - column:
